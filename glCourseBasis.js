@@ -86,7 +86,7 @@ class skybox{
 		this.shader = null;
 		this.nbTextures = 0;
 		this.textures = [];
-		this.boxSize = 2;
+		this.boxSize = 10;
 
 		this.initAll();
 	}
@@ -108,6 +108,7 @@ class skybox{
 		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
 		this.vBuffer.itemSize = 3;
 		this.vBuffer.numItems = vertices.length/3;
+		console.log(this.vBuffer.numItems);
 
 		var indices = [0, 2, 1, 0, 3, 2, 4, 5, 6, 4, 6, 7, 8, 9, 10, 8 , 10, 11, 12, 
 			14, 13, 12, 15, 14, 16, 17, 18, 16, 18, 19, 20, 22, 21, 20, 23, 22,
@@ -147,7 +148,8 @@ class skybox{
 	setMatrixUniforms(){
 		mat4.identity(mvMatrix);
 		mat4.translate(mvMatrix, distCENTER);
-		mat4.multiply(mvMatrix, rotMatrix);
+		mat4.multiply(mvMatrix, rotMatrix);		
+		mat4.rotate(mvMatrix, degToRad(90), [1, 0, 0]);
 		gl.uniformMatrix4fv(this.shader.pMatrixUniform, false, pMatrix);
 		gl.uniformMatrix4fv(this.shader.mvMatrixUniform, false, mvMatrix);
 	}
@@ -162,7 +164,6 @@ class skybox{
 	}
 
 	initTextures(tex){
-		//var teximgs = ["posy.jpg", "negy.jpg", "posz.jpg", "negz.jpg", "negx.jpg", "posx.jpg"];
 		var teximgs = ["posx.jpg", "negx.jpg", "posy.jpg", "negy.jpg", "posz.jpg", "negz.jpg"];
 		var texture = gl.createTexture();
 		gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture);
