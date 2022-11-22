@@ -14,6 +14,8 @@ var OBJ2 = null;
 var PLANE = null;
 var SKYBOX = null;
 
+var skybox_choice = document.getElementById("skybox-select").value;
+
 // =====================================================
 // OBJET 3D, lecture fichier obj
 // =====================================================
@@ -122,7 +124,9 @@ class skybox{
 
 		this.nbTextures = 0;
 		//this.initTextures("Skybox/NissiBeach/");
-		this.initTextures("Skybox/Sky/");
+		console.log(skybox_choice);
+		this.initTextures(skybox_choice);
+		
 
 		loadShaders(this);
 	}
@@ -175,7 +179,6 @@ class skybox{
 		for(var i = 0; i< teximgs.length; i++){
 			var texImage = new Image();
 			texImage.src = tex+teximgs[i];
-
 			this.textures.push(texImage);
 			console.log(texImage.src);
 			texImage.onload = () => {
@@ -276,7 +279,11 @@ class plane {
 // FONCTIONS GENERALES, INITIALISATIONS
 // =====================================================
 
-
+// =====================================================
+function updateSkybox(){
+	skybox_choice = document.getElementById("skybox-select").value;;
+	SKYBOX = new skybox();
+}
 
 // =====================================================
 function initGL(canvas)
