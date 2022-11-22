@@ -1,14 +1,12 @@
 attribute vec3 aVertexPosition;
-attribute vec2 aTexCoords;
 
 uniform mat4 uMVMatrix;
 uniform mat4 uPMatrix;
 
-varying vec2 texCoords;
-varying vec3 vPosOrig;
+varying vec3 texCoords;
 
 void main(void){
-    texCoords = aTexCoords;
-    vPosOrig = aVertexPosition;
-    gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
+    texCoords = aVertexPosition;
+    vec4 pos =  uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
+    gl_Position = pos;
 }

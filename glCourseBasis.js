@@ -93,6 +93,7 @@ class skybox{
 
 	initAll(){
 		var s = this.boxSize;
+
 		var vertices = [
 			-s, -s, s,	s, -s, s,	s, s, s,	-s, s, s, //top
 			-s, -s, -s, s, -s, -s,	s, s, -s,	-s, s, -s, //bot
@@ -108,21 +109,6 @@ class skybox{
 		this.vBuffer.itemSize = 3;
 		this.vBuffer.numItems = vertices.length/3;
 
-		var texcoords = [
-			0.0, 1.0,	1.0, 1.0,	1.0, 0.0,	0.0, 0.0, //top
-			0.0, 0.0,	1.0, 0.0,	1.0, 1.0,	0.0, 1.0, //bottom
-			0.0, 0.0,	1.0, 0.0,	1.0, 1.0,	0.0, 1.0, //front
-			1.0, 0.0,	0.0, 0.0,	0.0, 1.0,	1.0, 1.0, //back
-			0.0, 0.0,	1.0, 0.0,	1.0, 1.0,	0.0, 1.0, //left
-			1.0, 0.0,	0.0, 0.0,	0.0, 1.0,	1.0, 1.0, //right
-		];
-
-		this.tBuffer = gl.createBuffer();
-		gl.bindBuffer(gl.ARRAY_BUFFER, this.tBuffer);
-		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(texcoords), gl.STATIC_DRAW);
-		this.tBuffer.itemSize = 2;
-		this.tBuffer.numItems = texcoords.length/2;
-
 		var indices = [0, 2, 1, 0, 3, 2, 4, 5, 6, 4, 6, 7, 8, 9, 10, 8 , 10, 11, 12, 
 			14, 13, 12, 15, 14, 16, 17, 18, 16, 18, 19, 20, 22, 21, 20, 23, 22,
 		];
@@ -134,7 +120,8 @@ class skybox{
 		this.iBuffer.numItems = indices.length;
 
 		this.nbTextures = 0;
-		this.initTextures("Skybox/NissiBeach/");
+		//this.initTextures("Skybox/NissiBeach/");
+		this.initTextures("Skybox/Sky/");
 
 		loadShaders(this);
 	}
@@ -147,46 +134,14 @@ class skybox{
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.vBuffer);
 		gl.vertexAttribPointer(this.shader.vAttrib, this.vBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
-		this.shader.tAttrib = gl.getAttribLocation(this.shader, "aTexCoords");
-		gl.enableVertexAttribArray(this.shader.tAttrib);
-		gl.bindBuffer(gl.ARRAY_BUFFER, this.tBuffer);
-		gl.vertexAttribPointer(this.shader.tAttrib,this.tBuffer.itemSize, gl.FLOAT, false, 0, 0);
-
-		gl.activeTexture(gl.TEXTURE0);
-		gl.bindTexture(gl.TEXTURE_2D, this.textures[0]);
-		this.shader.sampler0 = gl.getUniformLocation(this.shader, "uSampler0");
-		gl.uniform1i(this.shader.sampler0, 0);
-
-		gl.activeTexture(gl.TEXTURE1);
-		gl.bindTexture(gl.TEXTURE_2D, this.textures[1]);
-		this.shader.sampler1 = gl.getUniformLocation(this.shader, "uSampler1");
-		gl.uniform1i(this.shader.sampler1, 1);
-
-		gl.activeTexture(gl.TEXTURE2);
-		gl.bindTexture(gl.TEXTURE_2D, this.textures[2]);
-		this.shader.sampler2 = gl.getUniformLocation(this.shader, "uSampler2");
-		gl.uniform1i(this.shader.sampler2, 2);
-
-		gl.activeTexture(gl.TEXTURE3);
-		gl.bindTexture(gl.TEXTURE_2D, this.textures[3]);
-		this.shader.sampler3 = gl.getUniformLocation(this.shader, "uSampler3");
-		gl.uniform1i(this.shader.sampler3, 3);
-
-		gl.activeTexture(gl.TEXTURE4);
-		gl.bindTexture(gl.TEXTURE_2D, this.textures[4]);
-		this.shader.sampler4 = gl.getUniformLocation(this.shader, "uSampler4");
-		gl.uniform1i(this.shader.sampler4, 4);
-
-		gl.activeTexture(gl.TEXTURE5);
-		gl.bindTexture(gl.TEXTURE_2D, this.textures[5]);
-		this.shader.sampler5 = gl.getUniformLocation(this.shader, "uSampler5");
-		gl.uniform1i(this.shader.sampler5, 5);
-
 		this.shader.pMatrixUniform = gl.getUniformLocation(this.shader, "uPMatrix");
 		this.shader.mvMatrixUniform = gl.getUniformLocation(this.shader, "uMVMatrix");
 
-		this.shader.uBoxSize = gl.getUniformLocation( this.shader, "boxSize");
+		this.shader.uBoxSize = gl.getUniformLocation(this.shader, "boxSize");
 		gl.uniform1f(this.shader.uBoxSize, this.boxSize);
+
+		var skyboxLocation = gl.getUniformLocation(this.shader, "uSkybox");
+		gl.uniform1i(skyboxLocation, 0);
 	}
 
 	setMatrixUniforms(){
@@ -207,25 +162,24 @@ class skybox{
 	}
 
 	initTextures(tex){
-		//var teximgs = ["posy.jpg", "negy.jpg", "posz.jpg", "negz.jpg", "posx.jpg", "negx.jpg"];
-		var teximgs = ["posy.jpg", "negy.jpg", "posz.jpg", "negz.jpg", "negx.jpg", "posx.jpg"];
+		//var teximgs = ["posy.jpg", "negy.jpg", "posz.jpg", "negz.jpg", "negx.jpg", "posx.jpg"];
+		var teximgs = ["posx.jpg", "negx.jpg", "posy.jpg", "negy.jpg", "posz.jpg", "negz.jpg"];
+		var texture = gl.createTexture();
+		gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture);
+		gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+		gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+		gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+		gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+
 		for(var i = 0; i< teximgs.length; i++){
 			var texImage = new Image();
 			texImage.src = tex+teximgs[i];
-			
-			var texture = gl.createTexture();
-			texture.image = texImage;
 
-			this.textures.push(texture);
+			this.textures.push(texImage);
 			console.log(texImage.src);
 			texImage.onload = () => {
-				gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-				gl.bindTexture(gl.TEXTURE_2D, this.textures[this.nbTextures]);
-				gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, this.textures[this.nbTextures].image);
-				gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-				gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-				gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-				gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+				console.log(this.textures[this.nbTextures]);				
+				gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X+this.nbTextures, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, this.textures[this.nbTextures]);
 				this.nbTextures++;
 			}
 		}
