@@ -15,10 +15,11 @@
       style="
         width: 350px;
         height: 100%;
-        right: 350px;
+        right: 0;
         background-color: #e8e8e8;
         position: fixed;
-        padding-top: 30px;
+        padding-top: 20px;
+        padding-left: 10px;
       "
     >
       <label for="skybox">Choose a skybox:</label>
@@ -33,11 +34,16 @@
         <option value="bunny.obj">Bunny</option>
         <option value="mustang.obj">Mustang</option>
       </select>
-
       <br>
+
       <label for="shader">Choose a shader model:</label>
+      <br>
       <input type="radio" name="shader" value="0" checked>Lambert</input>
       <input type="radio" name="shader" value="1">Blinn-Phong</input>
+      <input type="radio" name="shader" value="2">Mirror</input>
+      <br>
+
+      <input type="checkbox" name="plane" id="plane_select">Display plane</input>
     </div>
 
     <script type="text/javascript" src="glMatrix.js"></script>

@@ -10,7 +10,7 @@ var rotY = 0;
 var rotX = -1;
 
 // =====================================================
-window.requestAnimFrame = (function()
+window.requestAnimationFrame = (function()
 {
 	return window.requestAnimationFrame ||
          window.webkitRequestAnimationFrame ||
@@ -26,7 +26,7 @@ window.requestAnimFrame = (function()
 
 // ==========================================
 function tick() {
-	requestAnimFrame(tick);
+	requestAnimationFrame(tick);
 	drawScene();
 }
 

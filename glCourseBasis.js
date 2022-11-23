@@ -6,6 +6,7 @@ var gl;
 var mvMatrix = mat4.create();
 var pMatrix = mat4.create();
 var rotMatrix = mat4.create();
+var rotMatrixTex = mat4.create(); //Car les images de la cubeMap sont retournées
 var distCENTER;
 // =====================================================
 
@@ -52,6 +53,7 @@ class objmesh {
 		this.shader.rMatrixUniform = gl.getUniformLocation(this.shader, "uRMatrix");
 		this.shader.mvMatrixUniform = gl.getUniformLocation(this.shader, "uMVMatrix");
 		this.shader.pMatrixUniform = gl.getUniformLocation(this.shader, "uPMatrix");
+		this.shader.rotmvMatrixUniform = gl.getUniformLocation(this.shader, "uRotMVMatrix");
 
 		var radioButtons = document.querySelectorAll('input[name="shader"]');
 		for (const radioButton of radioButtons) {
@@ -73,6 +75,10 @@ class objmesh {
 		gl.uniformMatrix4fv(this.shader.mvMatrixUniform, false, mvMatrix);
 		gl.uniformMatrix4fv(this.shader.pMatrixUniform, false, pMatrix);
 		gl.uniform1i(this.shader.model, shaderModel);
+		
+		//Ici on fait une rotation pour compenser celle faite pour la skybox (sinon les côtés refletés sont erronnés)
+		mat4.rotate(mvMatrix, degToRad(90), [1, 0, 0]); 
+		gl.uniformMatrix4fv(this.shader.rotmvMatrixUniform, false, mvMatrix);
 	}
 	
 	// --------------------------------------------
@@ -109,12 +115,12 @@ class skybox{
 		var s = this.boxSize;
 
 		var vertices = [
-			-s, -s, s,	s, -s, s,	s, s, s,	-s, s, s, //top
-			-s, -s, -s, s, -s, -s,	s, s, -s,	-s, s, -s, //bot
-			-s, s, -s,	s, s, -s,	s, s, s,	-s, s, s, //front
-			-s, -s, -s,	s, -s, -s,	s, -s, s,	-s, -s, s, //back
-			-s, -s, -s,	-s, s, -s,	-s, s, s,	-s, -s, s, //left
-			s, -s, -s,	s, s, -s,	s, s, s,	s, -s, s, //right
+			-s, -s, s,		s, -s, s,	s, s, s,	-s, s, s, //top
+			-s, -s, -s, 	s, -s, -s,	s, s, -s,	-s, s, -s, //bot
+			-s, s, -s,		s, s, -s,	s, s, s,	-s, s, s, //front
+			-s, -s, -s,		s, -s, -s,	s, -s, s,	-s, -s, s, //back
+			-s, -s, -s,		-s, s, -s,	-s, s, s,	-s, -s, s, //left
+			s, -s, -s,		s, s, -s,	s, s, s,	s, -s, s, //right
 		];
 
 		this.vBuffer = gl.createBuffer();
@@ -135,7 +141,6 @@ class skybox{
 		this.iBuffer.numItems = indices.length;
 
 		this.nbTextures = 0;
-		//this.initTextures("Skybox/NissiBeach/");
 		console.log(skybox_choice);
 		this.initTextures(skybox_choice);
 		
@@ -194,7 +199,7 @@ class skybox{
 			this.textures.push(texImage);
 			console.log(texImage.src);
 			texImage.onload = () => {
-				console.log(this.textures[this.nbTextures]);				
+				console.log(this.textures[this.nbTextures]);			
 				gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X+this.nbTextures, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, this.textures[this.nbTextures]);
 				this.nbTextures++;
 			}
@@ -417,7 +422,6 @@ function webGLStart() {
 	distCENTER = vec3.create([0,-0.2,-3]);
 	
 	PLANE = new plane();
-	//OBJ1 = new objmesh('bunny.obj');
 	OBJ1 = new objmesh(model_choice);
 	SKYBOX = new skybox();
 	
@@ -428,10 +432,8 @@ function webGLStart() {
 function drawScene() {
 	gl.clear(gl.COLOR_BUFFER_BIT);
 
-	PLANE.draw();
+	if(document.getElementById("plane_select").checked)
+		PLANE.draw();
 	OBJ1.draw();
 	SKYBOX.draw();
 }
-
-
-
