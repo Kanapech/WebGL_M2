@@ -10,12 +10,12 @@ var distCENTER;
 // =====================================================
 
 var OBJ1 = null;
-var OBJ2 = null;
 var PLANE = null;
 var SKYBOX = null;
 
 var skybox_choice = document.getElementById("skybox-select").value;
-
+var model_choice = document.getElementById("model-select").value;
+console.log(model_choice)
 // =====================================================
 // OBJET 3D, lecture fichier obj
 // =====================================================
@@ -286,6 +286,12 @@ function updateSkybox(){
 }
 
 // =====================================================
+function updateModel(){
+	model_choice = document.getElementById("model-select").value;;
+	OBJ1 = new objmesh(model_choice);
+}
+
+// =====================================================
 function initGL(canvas)
 {
 	try {
@@ -399,8 +405,8 @@ function webGLStart() {
 	distCENTER = vec3.create([0,-0.2,-3]);
 	
 	PLANE = new plane();
-	OBJ1 = new objmesh('bunny.obj');
-	OBJ2 = new objmesh('porsche.obj');
+	//OBJ1 = new objmesh('bunny.obj');
+	OBJ1 = new objmesh(model_choice);
 	SKYBOX = new skybox();
 	
 	tick();
@@ -411,8 +417,7 @@ function drawScene() {
 	gl.clear(gl.COLOR_BUFFER_BIT);
 
 	PLANE.draw();
-	//OBJ1.draw();
-	OBJ2.draw();
+	OBJ1.draw();
 	SKYBOX.draw();
 }
 
