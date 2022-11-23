@@ -15,6 +15,7 @@ var SKYBOX = null;
 
 var skybox_choice = document.getElementById("skybox-select").value;
 var model_choice = document.getElementById("model-select").value;
+var shaderModel = 0;
 console.log(model_choice)
 // =====================================================
 // OBJET 3D, lecture fichier obj
@@ -51,6 +52,16 @@ class objmesh {
 		this.shader.rMatrixUniform = gl.getUniformLocation(this.shader, "uRMatrix");
 		this.shader.mvMatrixUniform = gl.getUniformLocation(this.shader, "uMVMatrix");
 		this.shader.pMatrixUniform = gl.getUniformLocation(this.shader, "uPMatrix");
+
+		var radioButtons = document.querySelectorAll('input[name="shader"]');
+		for (const radioButton of radioButtons) {
+			if (radioButton.checked) {
+				shaderModel = radioButton.value;
+				break;
+			}
+		}
+
+		this.shader.model = gl.getUniformLocation(this.shader, "uModel")
 	}
 	
 	// --------------------------------------------
@@ -61,6 +72,7 @@ class objmesh {
 		gl.uniformMatrix4fv(this.shader.rMatrixUniform, false, rotMatrix);
 		gl.uniformMatrix4fv(this.shader.mvMatrixUniform, false, mvMatrix);
 		gl.uniformMatrix4fv(this.shader.pMatrixUniform, false, pMatrix);
+		gl.uniform1i(this.shader.model, shaderModel);
 	}
 	
 	// --------------------------------------------

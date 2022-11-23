@@ -30,13 +30,14 @@
       <label for="model">Choose a model:</label>
       <select name="model" id="model-select" onchange="updateModel()">
         <option value="porsche.obj">Porsche</option>
-        <option value="bunny.obj">Rabbit</option>
+        <option value="bunny.obj">Bunny</option>
         <option value="mustang.obj">Mustang</option>
       </select>
 
       <br>
       <label for="shader">Choose a shader model:</label>
-      <input type="radio" name="shader" id="shader-select"></input>
+      <input type="radio" name="shader" value="0" checked>Lambert</input>
+      <input type="radio" name="shader" value="1">Blinn-Phong</input>
     </div>
 
     <script type="text/javascript" src="glMatrix.js"></script>
