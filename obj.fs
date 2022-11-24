@@ -82,16 +82,21 @@ void main(void)
 		CookTorrance += specular;
 		vec3 Kd = max((1.0 - CookTorrance), 0.0); //refelectance diffuse (la somme des 2 doit être égale à 1 pour garder la même quantité de lumière reçue qu'envoyée)
 		
-		col *= (Kd*diff) + CookTorrance;
+		col = (Kd*diff) + CookTorrance;
 	}
 
 	if(uModel == 4){ //Transparent
 		//Modele basique
-		float ratio = air/diamond;
-		vec3 r = refract(lightDir, normals, ratio);
-		col = vec3(textureCube(uSkybox, normalize(r * mat3(RMatrix))));
+		float ratio = air/glass;
+		vec3 r = refract(-lightDir, normals, ratio);
+		//col = vec3(textureCube(uSkybox, normalize(r * mat3(RMatrix))));
 
 		//Meilleur modele
+		float NdotV = max(dot(normals,lightDir), 0.0);
+		float Kr = pow((air - glass) / (air + glass), 2.0);
+		vec3 r2 = reflect(-lightDir, normals);
+		float F = SchlickApprox(NdotV, Kr);
+		col = vec3((1.0 - F) * textureCube(uSkybox, normalize(r * mat3(RMatrix))) + F * textureCube(uSkybox, normalize(r2 * mat3(RMatrix))));
 	}
 
 	gl_FragColor = vec4(col, 1.0);
