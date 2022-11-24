@@ -17,6 +17,7 @@ var SKYBOX = null;
 var skybox_choice = document.getElementById("skybox-select").value;
 var model_choice = document.getElementById("model-select").value;
 var shaderModel = 0;
+var roughness = 0.5;
 console.log(model_choice)
 // =====================================================
 // OBJET 3D, lecture fichier obj
@@ -62,8 +63,22 @@ class objmesh {
 				break;
 			}
 		}
+		var roughnessSlider = document.getElementById("roughness_select");
+		var roughnessLabel = document.getElementById("roughness_label");
+		if(shaderModel == 3){
+			roughnessLabel.hidden = false;
+			roughnessSlider.hidden = false;
+			roughness = roughnessSlider.value/100;
+		}
+		else{
+			roughnessLabel.hidden = true;
+			roughnessSlider.hidden = true;
+		}
 
-		this.shader.model = gl.getUniformLocation(this.shader, "uModel")
+		this.shader.model = gl.getUniformLocation(this.shader, "uModel");
+		this.shader.roughness = gl.getUniformLocation(this.shader, "uRoughness");
+
+		
 	}
 	
 	// --------------------------------------------
@@ -75,6 +90,7 @@ class objmesh {
 		gl.uniformMatrix4fv(this.shader.mvMatrixUniform, false, mvMatrix);
 		gl.uniformMatrix4fv(this.shader.pMatrixUniform, false, pMatrix);
 		gl.uniform1i(this.shader.model, shaderModel);
+		gl.uniform1f(this.shader.roughness, roughness);
 		
 		//Ici on fait une rotation pour compenser celle faite pour la skybox (sinon les côtés refletés sont erronnés)
 		mat4.rotate(mvMatrix, degToRad(90), [1, 0, 0]); 

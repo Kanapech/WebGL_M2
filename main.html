@@ -8,8 +8,8 @@
     <canvas
       id="WebGL-test"
       style="position: fixed; border: none"
-      width="800"
-      height="600"
+      width="1280"
+      height="720"
     ></canvas>
     <div
       style="
@@ -42,7 +42,12 @@
       <br>
       <input type="radio" name="shader" value="0" checked>Lambert</input>
       <input type="radio" name="shader" value="1">Blinn-Phong</input>
+      <input type="radio" name="shader" value="3">Cook-Torrance</input>
       <input type="radio" name="shader" value="2">Mirror</input>
+      <br>
+
+      <label for="roughness" id="roughness_label" hidden>Roughness</label>
+      <input type="range" name="roughness" id="roughness_select" min="0" max="100" hidden>
       <br>
 
       <input type="checkbox" name="plane" id="plane_select">Display plane</input>
