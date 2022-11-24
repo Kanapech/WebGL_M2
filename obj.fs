@@ -87,16 +87,19 @@ void main(void)
 
 	if(uModel == 4){ //Transparent
 		//Modele basique
-		float ratio = air/glass;
+		float ratio = air/diamond;
 		vec3 r = refract(-lightDir, normals, ratio);
 		//col = vec3(textureCube(uSkybox, normalize(r * mat3(RMatrix))));
 
-		//Meilleur modele
+		//Meilleur modele avec reflet dans l'objet
 		float NdotV = max(dot(normals,lightDir), 0.0);
-		float Kr = pow((air - glass) / (air + glass), 2.0);
+		float Kr = pow((air - diamond) / (air + diamond), 2.0);
 		vec3 r2 = reflect(-lightDir, normals);
 		float F = SchlickApprox(NdotV, Kr);
-		col = vec3((1.0 - F) * textureCube(uSkybox, normalize(r * mat3(RMatrix))) + F * textureCube(uSkybox, normalize(r2 * mat3(RMatrix))));
+
+		vec4 reflectCol = textureCube(uSkybox, normalize(r2 * mat3(RMatrix)));
+		vec4 refractCol = textureCube(uSkybox, normalize(r * mat3(RMatrix)));
+		col = vec3(mix(refractCol, reflectCol, F));
 	}
 
 	gl_FragColor = vec4(col, 1.0);
