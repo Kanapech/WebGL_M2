@@ -69,6 +69,7 @@ class objmesh {
 			roughnessLabel.hidden = false;
 			roughnessSlider.hidden = false;
 			roughness = roughnessSlider.value/100;
+			//console.log(roughness);
 		}
 		else{
 			roughnessLabel.hidden = true;
