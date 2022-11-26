@@ -2,57 +2,98 @@
   <head>
     <title>WebGL - Canvas test</title>
     <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1" />
+    <link rel="stylesheet" href="./css/bulma.min.css">
+    <link rel="stylesheet" href="./css/bulma-slider.min.css">
   </head>
 
   <body onload="webGLStart();">
     <canvas
       id="WebGL-test"
-      style="position: fixed; border: none"
-      width="1280"
-      height="720"
+      style="position: fixed; border: none; width:calc(100vw - 320px); height:100vh"
     ></canvas>
     <div
       style="
-        width: 350px;
+        width: 320px;
         height: 100%;
         right: 0;
-        background-color: #e8e8e8;
+        background-color: #000000ef;
         position: fixed;
         padding-top: 20px;
         padding-left: 10px;
       "
     >
-      <label for="skybox">Choose a skybox:</label>
-      <select name="skybox" id="skybox-select" onchange="updateSkybox()">
-        <option value="Skybox/NissiBeach/">Nissi Beach</option>
-        <option value="Skybox/Sky/">Mountains</option>
-        <option value="Skybox/Doom2016/">Doom 2016</option>
-        <option value="Skybox/Lycksele/">Lycksele</option>
-      </select>
-      <br>
-      <label for="model">Choose a model:</label>
-      <select name="model" id="model-select" onchange="updateModel()">
-        <option value="porsche.obj">Porsche</option>
-        <option value="bunny.obj">Bunny</option>
-        <option value="mustang.obj">Mustang</option>
-        <option value="sphere.obj">Sphere</option>
-      </select>
-      <br>
+      <div class="select is-multiple is-primary">
+        <label for="skybox">Choose a skybox : </label>
+        <select name="skybox" id="skybox-select" onchange="updateSkybox()">
+          <option value="Skybox/NissiBeach/">Nissi Beach</option>
+          <option value="Skybox/Sky/">Mountains</option>
+          <option value="Skybox/Doom2016/">Doom 2016</option>
+          <option value="Skybox/Lycksele/">Lycksele</option>
+        </select>
+      </div>
+      
+      <div class="select is-multiple is-primary">
+        <label for="model">Choose a model : </label>
+        <select name="model" id="model-select" onchange="updateModel()">
+          <option value="porsche.obj">Porsche</option>
+          <option value="bunny.obj">Bunny</option>
+          <option value="mustang.obj">Mustang</option>
+          <option value="sphere.obj">Sphere</option>
+        </select>
+      </div>
 
-      <label for="shader">Choose a shader model:</label>
-      <br>
-      <input type="radio" name="shader" value="0" checked>Lambert</input>
-      <input type="radio" name="shader" value="1">Blinn-Phong</input>
-      <input type="radio" name="shader" value="3">Cook-Torrance</input>
-      <input type="radio" name="shader" value="2">Mirror</input>
-      <input type="radio" name="shader" value="4">Transparent</input>
-      <br>
+      <div class="control">
+        <label for="shader">Choose a shader model :</label>
+        <br>
+        <input type="radio" name="shader" value="0" checked> Lambert</input>
+        <br>
+        <input type="radio" name="shader" value="1"> Blinn-Phong</input>
+        <br>
+        <input type="radio" name="shader" value="3"> Cook-Torrance</input>
+        <br>
+        <input type="radio" name="shader" value="2"> Mirror</input>
+        <br>
+        <input type="radio" name="shader" value="4"> Transparent</input>
+        <br>
+      </div>
+      <div>
+        <label for="roughness" id="roughness_label" style="visibility: hidden;">Roughness : </label>
+        <br>
+        <input type="range" name="roughness" id="roughness_select" class="slider is-circle has-output" min="0" max="100" style="visibility: hidden;">
+        <output id="roughness_output" for="roughness_select" style="visibility: hidden;">50</output>
+      </div>
 
-      <label for="roughness" id="roughness_label" hidden>Roughness</label>
-      <input type="range" name="roughness" id="roughness_select" min="0" max="100" hidden>
-      <br>
-
-      <input type="checkbox" name="plane" id="plane_select">Display plane</input>
+      <div>
+        <label for="plane">Display plane : </label>
+        <input type="checkbox" name="plane" id="plane_select"></input>
+      </div>
+      
+      <div>
+        <br>
+        <h1>Indices de refraction :</h1>
+        <div class="select is-multiple is-primary">
+          <label for="n1">N1 : </label>
+          <select name="n1" id="n1_select">
+            <option value="1.0">Air</option>
+            <option value="1.31">Ice</option>
+            <option value="1.33">Water</option>
+            <option value="1.5">Glass</option>
+          </select>
+        </div>
+  
+        <div class="select is-multiple is-primary">
+          <label for="n2">N2 : </label>
+          <select name="n2" id="n2_select">
+            <option value="1.5">Glass</option>
+            <option value="1.1">Bubble</option>
+            <option value="1.31">Ice</option>
+            <option value="1.33">Water</option>
+            <option value="2.42">Diamond</option>
+            <option value="2.5">Steel</option>
+          </select>
+        </div>
+      </div>
+      
     </div>
 
     <script type="text/javascript" src="glMatrix.js"></script>

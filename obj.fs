@@ -4,6 +4,8 @@ precision mediump float;
 uniform int uModel;
 uniform float uRoughness;
 uniform samplerCube uSkybox;
+uniform float uN1;
+uniform float uN2;
 
 varying vec4 pos3D;
 varying vec3 N;
@@ -32,17 +34,6 @@ float GGXSmith(float roughness2, float NdotV) // La lumière est à la même pos
 // ==============================================
 void main(void)
 {
-	//Différents indices de réfraction
-	float mirror = 0.0;
-	float air = 1.0;
-	float bubble = 1.1;
-	float ice = 1.31;
-	float water = 1.33;
-	float glass = 1.5;
-	float standard = 2.0;
-	float steel = 2.5;
-	float diamond = 2.42;
-
 	vec3 col = vec3(0.8,0.4,0.4);
 	vec3 lightDir = normalize(-pos3D.xyz); //same as eye position here
 	vec3 normals = normalize(N);
@@ -72,7 +63,7 @@ void main(void)
 		float NdotH = max(dot(normals,halfAngle), 0.0);
 		float NH2 = pow(NdotH, 2.0);
 		float roughness2 = pow(clamp(uRoughness, 0.01, 0.99), 2.0);
-		float Kr = pow((air - standard) / (air + standard), 2.0);
+		float Kr = pow((uN1 - uN2) / (uN1 + uN2), 2.0);
 
 		float F = SchlickApprox(NdotV, Kr);
 		float D = TrowbridgeReitz(NH2, roughness2);
@@ -87,13 +78,13 @@ void main(void)
 
 	if(uModel == 4){ //Transparent
 		//Modele basique
-		float ratio = air/diamond;
+		float ratio = uN1/uN2;
 		vec3 r = refract(-lightDir, normals, ratio);
 		//col = vec3(textureCube(uSkybox, normalize(r * mat3(RMatrix))));
 
 		//Meilleur modele avec reflet dans l'objet
 		float NdotV = max(dot(normals,lightDir), 0.0);
-		float Kr = pow((air - diamond) / (air + diamond), 2.0);
+		float Kr = pow((uN1 - uN2) / (uN1 + uN2), 2.0);
 		vec3 r2 = reflect(-lightDir, normals);
 		float F = SchlickApprox(NdotV, Kr);
 

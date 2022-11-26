@@ -18,6 +18,8 @@ var skybox_choice = document.getElementById("skybox-select").value;
 var model_choice = document.getElementById("model-select").value;
 var shaderModel = 0;
 var roughness = 0.5;
+var n1 = 1.0;
+var n2 = 1.5;
 console.log(model_choice)
 // =====================================================
 // OBJET 3D, lecture fichier obj
@@ -56,6 +58,7 @@ class objmesh {
 		this.shader.pMatrixUniform = gl.getUniformLocation(this.shader, "uPMatrix");
 		this.shader.rotmvMatrixUniform = gl.getUniformLocation(this.shader, "uRotMVMatrix");
 
+		//Shader model selection
 		var radioButtons = document.querySelectorAll('input[name="shader"]');
 		for (const radioButton of radioButtons) {
 			if (radioButton.checked) {
@@ -63,21 +66,33 @@ class objmesh {
 				break;
 			}
 		}
+
+		//Roughness selection 
 		var roughnessSlider = document.getElementById("roughness_select");
 		var roughnessLabel = document.getElementById("roughness_label");
+		var roughnessOutput = document.getElementById("roughness_output");
 		if(shaderModel == 3){
-			roughnessLabel.hidden = false;
-			roughnessSlider.hidden = false;
+			roughnessLabel.style.visibility = "visible";
+			roughnessSlider.style.visibility = "visible";
+			roughnessOutput.style.visibility = "visible";
 			roughness = roughnessSlider.value/100;
+			roughnessOutput.innerText = roughnessSlider.value/100;
 			//console.log(roughness);
 		}
 		else{
-			roughnessLabel.hidden = true;
-			roughnessSlider.hidden = true;
+			roughnessLabel.style.visibility = "hidden";
+			roughnessSlider.style.visibility = "hidden";
+			roughnessOutput.style.visibility = "hidden";
 		}
+
+		//indices de refraction (Cook-Torrance et Transparent)
+		n1 = document.getElementById("n1_select").value;
+		n2 = document.getElementById("n2_select").value;
 
 		this.shader.model = gl.getUniformLocation(this.shader, "uModel");
 		this.shader.roughness = gl.getUniformLocation(this.shader, "uRoughness");
+		this.shader.n1 = gl.getUniformLocation(this.shader, "uN1");
+		this.shader.n2 = gl.getUniformLocation(this.shader, "uN2");
 
 		
 	}
@@ -92,6 +107,8 @@ class objmesh {
 		gl.uniformMatrix4fv(this.shader.pMatrixUniform, false, pMatrix);
 		gl.uniform1i(this.shader.model, shaderModel);
 		gl.uniform1f(this.shader.roughness, roughness);
+		gl.uniform1f(this.shader.n1, n1);
+		gl.uniform1f(this.shader.n2, n2);
 		
 		//Ici on fait une rotation pour compenser celle faite pour la skybox (sinon les côtés refletés sont erronnés)
 		mat4.rotate(mvMatrix, degToRad(90), [1, 0, 0]); 
@@ -315,13 +332,13 @@ class plane {
 
 // =====================================================
 function updateSkybox(){
-	skybox_choice = document.getElementById("skybox-select").value;;
+	skybox_choice = document.getElementById("skybox-select").value;
 	SKYBOX = new skybox();
 }
 
 // =====================================================
 function updateModel(){
-	model_choice = document.getElementById("model-select").value;;
+	model_choice = document.getElementById("model-select").value;
 	OBJ1 = new objmesh(model_choice);
 }
 
@@ -423,11 +440,14 @@ function compileShaders(Obj3D)
 function webGLStart() {
 	
 	var canvas = document.getElementById("WebGL-test");
-
+	canvas.width = canvas.clientWidth;
+	canvas.height = canvas.clientHeight;
 	canvas.onmousedown = handleMouseDown;
 	document.onmouseup = handleMouseUp;
 	document.onmousemove = handleMouseMove;
 	canvas.onwheel = handleMouseWheel;
+
+	
 
 	initGL(canvas);
 
@@ -448,7 +468,9 @@ function webGLStart() {
 // =====================================================
 function drawScene() {
 	gl.clear(gl.COLOR_BUFFER_BIT);
-
+	var canvas = document.getElementById("WebGL-test");
+	canvas.width = canvas.clientWidth;
+	canvas.height = canvas.clientHeight;
 	if(document.getElementById("plane_select").checked)
 		PLANE.draw();
 	OBJ1.draw();
